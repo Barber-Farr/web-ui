@@ -24,3 +24,20 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.theme-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.theme-icon--sun {
+  display: none;
+}
+
+.dark .theme-icon--moon {
+  display: none;
+}
+
+.dark .theme-icon--sun {
+  display: block;
+}
