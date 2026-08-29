@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Services & Prices | Barber Farr",
   description:
     "Explore haircut, fade, beard, maintenance, and age-specific services available from Barber Farr in Tetbury.",
+  alternates: {
+    canonical: "/services",
+  },
 };
 
 const ServicesPage = () => {
@@ -149,9 +152,7 @@ const ServicesPage = () => {
 
       <section className="grid gap-12 bg-brand px-6 py-24 text-brand-contrast sm:px-10 lg:grid-cols-[1fr_auto] lg:items-end lg:px-[7vw] lg:py-32">
         <div>
-          <p className="font-mono text-[11px] tracking-[0.14em] uppercase opacity-65">
-            Need some guidance?
-          </p>
+          <p className="font-mono text-[11px] tracking-[0.14em] uppercase">Need some guidance?</p>
 
           <h2 className="mt-6 text-5xl leading-[0.9] font-semibold tracking-[-0.065em] sm:text-6xl">
             Not sure what

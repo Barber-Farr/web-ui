@@ -1,10 +1,19 @@
-import { ArrowUpRight, AtSign, MapPin } from "lucide-react";
+import { ArrowUpRight, AtSign, MapPin, Star } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { SiteFooter } from "./components/site-footer";
 import { SiteHeader } from "./components/site-header";
-import { cuts } from "./data/cuts";
-import { bookingUrl, externalLinkProps, googleReviewsUrl, instagramUrl } from "./data/links";
+import { cuts, type Cut } from "./data/cuts";
+import {
+  bookingUrl,
+  directionsUrl,
+  externalLinkProps,
+  googleReviewsUrl,
+  instagramUrl,
+} from "./data/links";
+import { currentLocation } from "./data/location";
+import { reviews, reviewSummary } from "./data/reviews";
 import { serviceGroups } from "./data/services";
 
 const sectionClasses = "border-t border-border px-6 py-24 sm:px-10 lg:px-[7vw] lg:py-40";
@@ -24,8 +33,17 @@ const textLinkClasses =
   "inline-flex w-max items-center gap-2 text-sm text-muted-foreground " +
   "transition-colors hover:text-foreground";
 
+type CutWithImage = Cut & {
+  image: string;
+  imageAlt: string;
+};
+
+const hasImage = (cut: Cut): cut is CutWithImage => {
+  return Boolean(cut.image && cut.imageAlt);
+};
+
 const Home = () => {
-  const featuredCuts = cuts.slice(0, 3);
+  const featuredCuts = cuts.filter(hasImage).slice(0, 3);
 
   const serviceGroupDescriptions: Record<string, string> = {
     "cuts-and-fades":
@@ -59,7 +77,7 @@ const Home = () => {
           </h1>
 
           <p className="mt-10 max-w-xl text-lg leading-relaxed text-muted-foreground lg:text-xl">
-            Sharp, considered cuts by Barber Farr—currently working from Moli Barbers in the heart
+            Sharp, considered cuts by Barber Farr - currently working from Moli Barbers in the heart
             of Tetbury.
           </p>
 
@@ -76,31 +94,41 @@ const Home = () => {
           </div>
         </div>
 
-        <div
-          className="relative min-h-[560px] overflow-hidden bg-[radial-gradient(circle_at_68%_25%,rgb(214_106_89_/_28%),transparent_31%),linear-gradient(145deg,#2c312d_0%,#151816_55%,#080908_100%)] text-[#f5f2ec] lg:min-h-[720px]"
-          aria-label="Barber Farr photography coming soon"
-        >
-          <span className="absolute top-28 right-[9%] font-mono text-xs text-[#f5f2ec]/30">01</span>
+        <div className="relative min-h-[560px] overflow-hidden bg-[#151816] text-[#f5f2ec] lg:min-h-[720px]">
+          <Image
+            src="/images/hero.jpg"
+            alt="Charlie Farr of Barber Farr"
+            fill
+            priority
+            fetchPriority="high"
+            sizes="(max-width: 1024px) 100vw, 46vw"
+            className="object-cover object-center"
+          />
 
-          <div className="absolute bottom-[18%] left-[10%] flex flex-col gap-3">
-            <span className="font-mono text-[11px] tracking-[0.16em] text-[#d66a59] uppercase">
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-black/20"
+            aria-hidden="true"
+          />
+
+          <span className="absolute top-28 right-[9%] font-mono text-xs text-white/50">01</span>
+
+          <div className="absolute bottom-[18%] left-[7%] w-[min(86%,28rem)] rounded-3xl border border-white/15 bg-black/55 p-6 shadow-2xl backdrop-blur-md sm:p-8">
+            <span className="font-mono text-[11px] tracking-[0.16em] text-[#f08a78] uppercase">
               Barber Farr
             </span>
 
-            <strong className="font-serif text-[clamp(2.5rem,4vw,4.25rem)] leading-[0.95] font-normal">
-              Photography
-              <br />
-              coming soon.
-            </strong>
+            <p className="mt-3 max-w-sm font-serif text-[clamp(2rem,3vw,3.25rem)] leading-[0.95] text-white">
+              Five years behind the chair.
+            </p>
           </div>
 
-          <div className="absolute right-[7%] bottom-[5%] flex items-center gap-3 rounded-full border border-white/15 bg-white/8 px-5 py-3 backdrop-blur-xl">
-            <MapPin className="size-4.5 text-[#d66a59]" aria-hidden="true" />
+          <div className="absolute right-[7%] bottom-[5%] flex items-center gap-3 rounded-full border border-white/15 bg-black/30 px-5 py-3 backdrop-blur-xl">
+            <MapPin className="size-4.5 text-[#f08a78]" aria-hidden="true" />
 
-            <span className="text-[11px] leading-snug text-[#f5f2ec]/60">
+            <span className="text-[11px] leading-snug text-white/70">
               Currently at
               <br />
-              <strong className="font-medium text-[#f5f2ec]">Moli Barbers, Tetbury</strong>
+              <strong className="font-medium text-white">Moli Barbers, Tetbury</strong>
             </span>
           </div>
         </div>
@@ -120,8 +148,10 @@ const Home = () => {
           </h2>
 
           <p className="mt-10 max-w-2xl text-lg leading-relaxed text-muted-foreground lg:ml-auto lg:text-2xl">
-            Barber Farr is an independent barber based in Tetbury, focused on considered cuts that
-            look sharp on day one and grow out well.
+            Barbering for over five years, Charlie brings experience, attention to detail and an
+            individual approach to every cut. From traditional trims to technical fades, and with a
+            particular soft spot for a proper mullet, each appointment is shaped around the person
+            in the chair.
           </p>
         </div>
       </section>
@@ -218,74 +248,202 @@ const Home = () => {
           {featuredCuts.map((cut, index) => (
             <Link
               className={[
-                "group relative min-h-[420px] overflow-hidden bg-[#1c201d] text-[#f5f2ec]",
-                "after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_70%_25%,rgb(158_63_50_/_28%),transparent_30%)]",
+                "group relative isolate min-h-[420px] overflow-hidden rounded-3xl bg-surface-elevated",
                 index === 0 ? "sm:row-span-2 sm:min-h-[856px]" : "",
-                index === 1 ? "bg-brand" : "",
-                index === 2 ? "bg-[#343a34]" : "",
               ].join(" ")}
               href={`/cuts#${cut.id}`}
               key={cut.id}
             >
-              <span className="absolute top-6 right-6 z-10 font-mono text-xs opacity-50">
+              <Image
+                src={cut.image}
+                alt={cut.imageAlt}
+                fill
+                sizes={
+                  index === 0 ? "(max-width: 640px) 100vw, 45vw" : "(max-width: 640px) 100vw, 30vw"
+                }
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              />
+
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-black/15"
+                aria-hidden="true"
+              />
+
+              <span className="absolute top-6 right-6 z-10 rounded-full border border-white/15 bg-black/45 px-3 py-2 font-mono text-xs text-white/75 backdrop-blur-md">
                 {String(index + 1).padStart(2, "0")}
               </span>
 
-              <div className="absolute bottom-7 left-7 z-10">
+              <div className="absolute right-5 bottom-5 left-5 z-10 rounded-2xl border border-white/15 bg-black/55 p-5 text-white shadow-xl backdrop-blur-md sm:right-7 sm:bottom-7 sm:left-7">
                 <p className="font-serif text-3xl leading-none">{cut.name}</p>
-                <small className="mt-3 block text-xs text-[#f5f2ec]/60">{cut.maintenance}</small>
 
-                <ArrowUpRight
-                  className="mt-5 size-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
-                  aria-hidden="true"
-                />
+                <div className="mt-3 flex items-end justify-between gap-5">
+                  <small className="block max-w-[15rem] text-xs leading-relaxed text-white/70">
+                    {cut.maintenance}
+                  </small>
+
+                  <ArrowUpRight
+                    className="size-5 shrink-0 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+                    aria-hidden="true"
+                  />
+                </div>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      <section
-        className={`${sectionClasses} grid items-center gap-16 bg-surface-elevated lg:grid-cols-2 lg:gap-[10vw]`}
-        id="reviews"
-      >
-        <div>
-          <p className={sectionIndexClasses}>04 / Word of mouth</p>
+      <section className={`${sectionClasses} bg-surface-elevated`} id="reviews">
+        <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className={sectionIndexClasses}>04 / Word of mouth</p>
 
-          <h2 className={`${headingClasses} mt-7`}>
-            Proof is in
-            <br />
-            <em className="font-serif font-normal text-brand">the people.</em>
-          </h2>
-        </div>
-
-        <div className="border-t border-border pt-14 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-[7vw]">
-          <div className="font-serif text-8xl leading-[0.5] text-brand" aria-hidden="true">
-            “
+            <h2 className={`${headingClasses} mt-7`}>
+              Proof is in
+              <br />
+              <em className="font-serif font-normal text-brand">the people.</em>
+            </h2>
           </div>
 
-          <p className="my-8 max-w-xl font-serif text-2xl leading-snug sm:text-3xl">
-            Selected reviews from clients at Moli Barbers will appear here once approved.
+          <div className="lg:text-right">
+            <div
+              className="flex gap-1 lg:justify-end"
+              role="img"
+              aria-label={`${reviewSummary.rating} out of 5 stars`}
+            >
+              {Array.from({ length: 5 }, (_, index) => (
+                <Star className="size-4 fill-brand text-brand" aria-hidden="true" key={index} />
+              ))}
+            </div>
+
+            <p className="mt-3 text-3xl font-semibold tracking-[-0.04em]">
+              {reviewSummary.rating.toFixed(1)}
+            </p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              {reviewSummary.count} Google reviews
+            </p>
+
+            <p className="mt-1 text-xs text-muted-foreground">For {reviewSummary.business}</p>
+          </div>
+        </div>
+
+        <div className="mt-16 grid border-t border-l border-border lg:mt-24 lg:grid-cols-3">
+          {reviews.map((review, index) => (
+            <article
+              className="relative flex min-h-72 flex-col border-r border-b border-border p-7 sm:p-9"
+              key={review.quote}
+            >
+              <span className="font-serif text-6xl leading-none text-brand" aria-hidden="true">
+                “
+              </span>
+
+              <blockquote className="mt-5 font-serif text-2xl leading-snug">
+                {review.quote}
+              </blockquote>
+
+              <div className="mt-auto flex items-end justify-between gap-5 pt-10">
+                <cite className="text-xs leading-relaxed text-muted-foreground not-italic">
+                  {review.attribution}
+                </cite>
+
+                <span className="font-mono text-[10px] text-brand">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">
+            These reviews relate to Barber Farr’s current workplace, Moli Barbers. Rating last
+            checked {reviewSummary.lastVerified}.
           </p>
 
-          <span className="mb-10 block text-sm text-muted-foreground">
-            Reviews will be attributed to the current shop.
-          </span>
-
           <a className={textLinkClasses} href={googleReviewsUrl} {...externalLinkProps}>
-            View Moli Barbers on Google
+            View all Google reviews
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </a>
         </div>
       </section>
 
+      <section className={`${sectionClasses} bg-surface`} id="location">
+        <div className="grid gap-16 lg:grid-cols-[0.75fr_1.25fr] lg:gap-[10vw]">
+          <div>
+            <p className={sectionIndexClasses}>05 / Find me</p>
+
+            <h2 className={`${headingClasses} mt-7`}>
+              Currently at
+              <br />
+              <em className="font-serif font-normal text-brand">Moli.</em>
+            </h2>
+
+            <p className="mt-8 max-w-md leading-relaxed text-muted-foreground">
+              Barber Farr is an independent personal brand, currently working from Moli Barbers in
+              Tetbury.
+            </p>
+
+            <a className={`${textLinkClasses} mt-8`} href={directionsUrl} {...externalLinkProps}>
+              Get directions
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </a>
+          </div>
+
+          <div className="grid gap-12 sm:grid-cols-2">
+            <div>
+              <p className="font-mono text-[10px] tracking-[0.14em] text-brand uppercase">
+                Address
+              </p>
+
+              <address className="mt-6 text-xl leading-relaxed not-italic sm:text-2xl">
+                {currentLocation.address.map((line) => (
+                  <span className="block" key={line}>
+                    {line}
+                  </span>
+                ))}
+              </address>
+            </div>
+
+            <div>
+              <p className="font-mono text-[10px] tracking-[0.14em] text-brand uppercase">
+                Opening hours
+              </p>
+
+              <dl className="mt-6 border-t border-border">
+                {currentLocation.hours.map((entry) => (
+                  <div
+                    className="flex items-center justify-between border-b border-border py-4 text-sm"
+                    key={entry.days}
+                  >
+                    <dt className="text-muted-foreground">{entry.days}</dt>
+                    <dd className="font-medium">{entry.hours}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-16 grid gap-4 border-t border-border pt-8 sm:grid-cols-2">
+          {currentLocation.bookingNotes.map((note, index) => (
+            <div className="flex gap-4" key={note}>
+              <span className="font-mono text-[10px] text-brand">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <p className="text-sm text-muted-foreground">{note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="grid items-end gap-14 bg-brand px-6 py-24 text-brand-contrast sm:px-10 lg:grid-cols-[0.5fr_1.6fr_0.7fr] lg:gap-[6vw] lg:px-[7vw] lg:py-40">
-        <p className="self-start font-mono text-[11px] tracking-[0.14em] uppercase opacity-65">
-          05 / Book
+        <p className="self-start font-mono text-[11px] tracking-[0.14em] text-brand-contrast uppercase">
+          06 / Book
         </p>
 
         <div>
-          <p className="mb-4 opacity-70">Ready when you are.</p>
+          <p className="mb-4 text-brand-contrast">Ready when you are.</p>
           <h2 className={`${headingClasses} font-serif font-normal`}>Take a seat.</h2>
 
           <a
@@ -301,7 +459,7 @@ const Home = () => {
         <div className="flex items-center gap-3 lg:pb-3">
           <MapPin className="size-5" aria-hidden="true" />
 
-          <span className="text-xs leading-relaxed opacity-75">
+          <span className="text-xs leading-relaxed text-brand-contrast">
             Currently cutting at
             <br />
             <strong className="font-semibold">Moli Barbers · Tetbury</strong>

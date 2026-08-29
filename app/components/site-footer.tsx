@@ -8,7 +8,6 @@ export const SiteFooter = () => {
       <Link
         className="inline-flex w-max flex-col text-[13px] leading-[0.82] tracking-[0.15em] transition-colors hover:text-[#d66a59]"
         href="/"
-        aria-label="Barber Farr home"
       >
         <span>BARBER</span>
         <strong className="text-xl tracking-[0.04em]">FARR</strong>

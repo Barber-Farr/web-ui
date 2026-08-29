@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, AtSign } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { SectionNavigator } from "../components/section-navigator";
@@ -12,6 +13,9 @@ import { serviceGroups } from "../data/services";
 export const metadata: Metadata = {
   title: "Cuts & Styles | Barber Farr",
   description: "Explore popular haircuts and styles available from Barber Farr in Tetbury.",
+  alternates: {
+    canonical: "/cuts",
+  },
 };
 
 const services = serviceGroups.flatMap((group) => group.services);
@@ -96,25 +100,57 @@ const CutsPage = () => {
             >
               <div
                 className={[
-                  "relative min-h-[500px] overflow-hidden text-[#f5f2ec]",
-                  "bg-[radial-gradient(circle_at_70%_25%,rgb(158_63_50_/_28%),transparent_30%),linear-gradient(145deg,#2c312d_0%,#151816_55%,#080908_100%)]",
+                  "relative min-h-[500px] overflow-hidden rounded-3xl bg-surface-elevated",
+                  "sm:min-h-[620px] lg:min-h-[680px]",
                   index % 2 === 1 ? "lg:order-2" : "",
                 ].join(" ")}
               >
-                <span className="absolute top-7 right-7 font-mono text-xs opacity-40">
+                {cut.image && cut.imageAlt ? (
+                  <Image
+                    src={cut.image}
+                    alt={cut.imageAlt}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 52vw"
+                    className="object-cover transition-transform duration-700 ease-out hover:scale-[1.02]"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_70%_25%,rgb(214_106_89_/_25%),transparent_30%),linear-gradient(145deg,#2c312d_0%,#151816_55%,#080908_100%)] p-10 text-[#f5f2ec]">
+                    <div className="max-w-md text-center">
+                      <span className="font-mono text-[11px] tracking-[0.16em] text-[#f08a78] uppercase">
+                        Start somewhere new
+                      </span>
+
+                      <p className="mt-5 font-serif text-4xl leading-tight sm:text-5xl">
+                        No fixed template.
+                      </p>
+
+                      <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-white/65">
+                        A restyle starts with a conversation about your hair, routine and the
+                        direction you want to take it.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10"
+                  aria-hidden="true"
+                />
+
+                <span className="absolute top-6 right-6 rounded-full border border-white/15 bg-black/50 px-3 py-2 font-mono text-xs text-white/80 shadow-lg backdrop-blur-md">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
-                <div className="absolute bottom-8 left-8">
-                  <span className="font-mono text-[11px] tracking-[0.14em] text-[#d66a59] uppercase">
-                    Barber Farr
-                  </span>
+                <div className="absolute right-6 bottom-6 left-6 flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-black/55 px-5 py-4 text-white shadow-xl backdrop-blur-md">
+                  <div>
+                    <span className="font-mono text-[10px] tracking-[0.14em] text-[#f08a78] uppercase">
+                      Barber Farr
+                    </span>
 
-                  <p className="mt-3 font-serif text-3xl leading-tight">
-                    Photography
-                    <br />
-                    coming soon.
-                  </p>
+                    <p className="mt-1 font-serif text-xl">{cut.name}</p>
+                  </div>
+
+                  <ArrowUpRight className="size-5 shrink-0 text-white/75" aria-hidden="true" />
                 </div>
               </div>
 
@@ -152,10 +188,9 @@ const CutsPage = () => {
                 <a
                   className="mt-10 inline-flex min-h-13 w-max items-center gap-4 rounded-full bg-brand px-6 text-sm font-semibold text-brand-contrast transition hover:-translate-y-0.5 hover:bg-brand-hover"
                   href={getCutBookingUrl(cut.bookingService)}
-                  aria-label={`Book ${cut.bookingService}`}
                   {...externalLinkProps}
                 >
-                  Book this cut
+                  Book {cut.name}
                   <ArrowUpRight className="size-4" aria-hidden="true" />
                 </a>
               </div>

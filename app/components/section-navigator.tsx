@@ -102,7 +102,6 @@ export const SectionNavigator = ({ label, items }: SectionNavigatorProps) => {
           className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-3 text-left"
           type="button"
           onClick={() => setOpen(true)}
-          aria-label={`Browse ${label.toLowerCase()}`}
           aria-expanded={open}
         >
           <span className="font-mono text-[10px] tracking-[0.12em] text-brand uppercase">
